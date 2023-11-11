@@ -1,0 +1,30 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main", "develop", "staging", "master" ]
+
+jobs:
+  quality:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+        # suppor to run multiple versions OS
+        # os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
+    steps:
+        ## this step like clone and checkout the users
+      - uses: actions/checkout@v3
+        ## this one is node versions stratagy
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: action/setup-node@v3
+        with:
+          node-version:  ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
